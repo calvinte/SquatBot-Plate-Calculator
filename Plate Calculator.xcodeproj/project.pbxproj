@@ -161,9 +161,11 @@
 				TargetAttributes = {
 					C10F60901A23CDAC00414CC9 = {
 						CreatedOnToolsVersion = 6.1;
+						DevelopmentTeam = 87DHAN953P;
 					};
 					C10F60A51A23CDAC00414CC9 = {
 						CreatedOnToolsVersion = 6.1;
+						DevelopmentTeam = 87DHAN953P;
 						TestTargetID = C10F60901A23CDAC00414CC9;
 					};
 				};
@@ -358,6 +360,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -369,6 +373,7 @@
 				INFOPLIST_FILE = "Plate CalculatorTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Plate Calculator.app/Plate Calculator";
 			};
 			name = Debug;
@@ -377,6 +382,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -384,6 +391,7 @@
 				INFOPLIST_FILE = "Plate CalculatorTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Plate Calculator.app/Plate Calculator";
 			};
 			name = Release;
@@ -407,6 +415,7 @@
 				C10F60B21A23CDAC00414CC9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C10F60B31A23CDAC00414CC9 /* Build configuration list for PBXNativeTarget "Plate CalculatorTests" */ = {
 			isa = XCConfigurationList;
@@ -415,6 +424,7 @@
 				C10F60B51A23CDAC00414CC9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -24,10 +24,14 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         myLabel.text = "0"
         myPicker.delegate = self
         myPicker.dataSource = self
+
         
         myScene.scene = SCNScene()
         myScene.autoenablesDefaultLighting = true
-        myScene.allowsCameraControl = true
+        //myScene.allowsCameraControl = true
+
+        drawCamera()
+        drawBar()
     }
     
     //MARK: - Delegates and datasources
@@ -40,25 +44,43 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         return pickerData.count
     }
     
+    func drawCamera() {
+        var cameraNode = SCNNode()
+        cameraNode.camera = SCNCamera()
+        cameraNode.camera?.zFar = 1000
+        cameraNode.position = SCNVector3(x: -30, y: 0, z: 130)
+        myScene.scene?.rootNode.addChildNode(cameraNode)
+    }
+
     func drawBar() {
-        let cylinderGeometry = SCNCylinder(radius: 0.125, height: 4)
-
+        // IWF spec @see: http://en.wikipedia.org/wiki/Barbell
+        let barWidth = CGFloat(2.8)
+        let barHeight = CGFloat(131)
+        let collarWidth = CGFloat(5)
+        let collarHeight = CGFloat(44.5)
         let color = UIColor(hue: 0, saturation: 0, brightness: 0.7, alpha: 1.0)
-        cylinderGeometry.firstMaterial?.diffuse.contents = color
 
-        let cylinderNode = SCNNode(geometry: cylinderGeometry)
-        cylinderNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        let barGeometry = SCNCylinder(radius: barWidth, height: barHeight)
+        barGeometry.firstMaterial?.diffuse.contents = color
+        let barNode = SCNNode(geometry: barGeometry)
+        barNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        let barX = Float(barHeight/2)
+        barNode.position = SCNVector3(x: barX, y: 0.0, z: 0.0)
 
-        cylinderNode.position = SCNVector3(x: 1, y: 0.0, z: 0.0)
+        let collarGeometry = SCNCylinder(radius: collarWidth, height: collarHeight)
+        collarGeometry.firstMaterial?.diffuse.contents = color
+        let collarNode = SCNNode(geometry: collarGeometry)
+        collarNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        let collarX = -0.5 * Float(collarHeight)
+        collarNode.position = SCNVector3(x: collarX, y: 0.0, z: 0.0)
 
-        myScene.scene?.rootNode.addChildNode(cylinderNode)
+        myScene.scene?.rootNode.addChildNode(barNode)
+        myScene.scene?.rootNode.addChildNode(collarNode)
     }
 
     func drawPlate(position: Int, size: Float) {
-        println(position)
-        println(size)
-        let plateHeight = CGFloat(size / 6 + 0.125)
-        let plateWidth = plateHeight * 0.125
+        let plateHeight = CGFloat((size / 6 + 0.125) * 45)
+        let plateWidth = plateHeight * 0.1
         let cylinderGeometry = SCNTube(innerRadius: 0.13, outerRadius: plateHeight, height: plateWidth)
 
         let color = UIColor(hue: 0, saturation: 0, brightness: 0.3, alpha: 1.0)
@@ -67,7 +89,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let cylinderNode = SCNNode(geometry: cylinderGeometry)
         cylinderNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
 
-        let x = Float(0.125) * Float(position)
+        let x = Float(0.125 * 45) * Float(position)
         cylinderNode.position = SCNVector3(x: x, y: 0.0, z: 0.0)
 
         myScene.scene?.rootNode.addChildNode(cylinderNode)
@@ -100,6 +122,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         }
         
         clearPlates()
+        drawCamera()
         drawBar()
         for (index, weight) in enumerate(platesNeeded) {
             let size = Float(plates.count - (find(plates, weight)!))

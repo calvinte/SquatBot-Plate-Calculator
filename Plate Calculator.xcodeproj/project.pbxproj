@@ -13,6 +13,7 @@
 		C10F609E1A23CDAC00414CC9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C10F609D1A23CDAC00414CC9 /* Images.xcassets */; };
 		C10F60A11A23CDAC00414CC9 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C10F609F1A23CDAC00414CC9 /* LaunchScreen.xib */; };
 		C10F60AD1A23CDAC00414CC9 /* Plate_CalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10F60AC1A23CDAC00414CC9 /* Plate_CalculatorTests.swift */; };
+		C1A9E2031A24172D003671A2 /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1A9E2021A24172D003671A2 /* SceneKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		C10F60A61A23CDAC00414CC9 /* Plate CalculatorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Plate CalculatorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C10F60AB1A23CDAC00414CC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C10F60AC1A23CDAC00414CC9 /* Plate_CalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plate_CalculatorTests.swift; sourceTree = "<group>"; };
+		C1A9E2021A24172D003671A2 /* SceneKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SceneKit.framework; path = System/Library/Frameworks/SceneKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1A9E2031A24172D003671A2 /* SceneKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +62,7 @@
 		C10F60881A23CDAC00414CC9 = {
 			isa = PBXGroup;
 			children = (
+				C1A9E2021A24172D003671A2 /* SceneKit.framework */,
 				C10F60931A23CDAC00414CC9 /* Plate Calculator */,
 				C10F60A91A23CDAC00414CC9 /* Plate CalculatorTests */,
 				C10F60921A23CDAC00414CC9 /* Products */,

@@ -25,19 +25,28 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F0G-Xa-yXr">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="381"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </sceneKitView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="ltJ-jc-SAx" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="8iW-Wc-9Ai"/>
                             <constraint firstAttribute="bottom" secondItem="ltJ-jc-SAx" secondAttribute="bottom" constant="20" symbolic="YES" id="H0y-QY-elo"/>
                             <constraint firstItem="Tgs-A3-XaA" firstAttribute="centerX" secondItem="ltJ-jc-SAx" secondAttribute="centerX" id="KHo-iF-QRO"/>
+                            <constraint firstItem="F0G-Xa-yXr" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="Yow-GU-1iY"/>
                             <constraint firstItem="ltJ-jc-SAx" firstAttribute="top" secondItem="Tgs-A3-XaA" secondAttribute="bottom" constant="8" symbolic="YES" id="cei-jl-74z"/>
+                            <constraint firstItem="F0G-Xa-yXr" firstAttribute="trailing" secondItem="ltJ-jc-SAx" secondAttribute="trailing" id="fNC-o4-riv"/>
+                            <constraint firstItem="F0G-Xa-yXr" firstAttribute="leading" secondItem="ltJ-jc-SAx" secondAttribute="leading" id="nm5-9o-qA8"/>
+                            <constraint firstItem="Tgs-A3-XaA" firstAttribute="top" secondItem="F0G-Xa-yXr" secondAttribute="bottom" constant="8" symbolic="YES" id="xS9-k7-gTJ"/>
                             <constraint firstAttribute="trailing" secondItem="ltJ-jc-SAx" secondAttribute="trailing" id="zc8-Ql-qZV"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="myLabel" destination="Tgs-A3-XaA" id="lwp-Wq-Kcx"/>
                         <outlet property="myPicker" destination="ltJ-jc-SAx" id="GAq-Lt-Yuh"/>
+                        <outlet property="myScene" destination="F0G-Xa-yXr" id="yQ6-Oo-GAC"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

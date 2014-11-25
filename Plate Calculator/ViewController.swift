@@ -18,6 +18,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     var pickerData = Array(45...1000).filter { (number) in number % 5 == 0 }
     var plates = [45.0,35.0,25.0,10.0,5.0,2.5]
     var barWeight = 45.0
+    let collarWidth:CGFloat = 5
+    var weightOffsetX:Float = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,7 +58,6 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         // IWF spec @see: http://en.wikipedia.org/wiki/Barbell
         let barWidth = CGFloat(2.8)
         let barHeight = CGFloat(131)
-        let collarWidth = CGFloat(5)
         let collarHeight = CGFloat(44.5)
         let color = UIColor(hue: 0, saturation: 0, brightness: 0.7, alpha: 1.0)
 
@@ -78,21 +79,35 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         myScene.scene?.rootNode.addChildNode(collarNode)
     }
 
-    func drawPlate(position: Int, size: Float) {
+    func drawPlate(size: Float) {
         let plateHeight = CGFloat((size / 6 + 0.125) * 45)
         let plateWidth = plateHeight * 0.1
-        let cylinderGeometry = SCNTube(innerRadius: 0.13, outerRadius: plateHeight, height: plateWidth)
-
         let color = UIColor(hue: 0, saturation: 0, brightness: 0.3, alpha: 1.0)
-        cylinderGeometry.firstMaterial?.diffuse.contents = color
+        let innerHeight = collarWidth + 4
+        let outerHeight = plateHeight - 2
 
-        let cylinderNode = SCNNode(geometry: cylinderGeometry)
-        cylinderNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        let innerGeometry = SCNTube(innerRadius: collarWidth + 0.2, outerRadius: innerHeight, height: plateWidth)
+        innerGeometry.firstMaterial?.diffuse.contents = color
+        let innerNode = SCNNode(geometry: innerGeometry)
+        innerNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        innerNode.position = SCNVector3(x: weightOffsetX, y: 0.0, z: 0.0)
 
-        let x = Float(0.125 * 45) * Float(position)
-        cylinderNode.position = SCNVector3(x: x, y: 0.0, z: 0.0)
+        let outerGeometry = SCNTube(innerRadius: outerHeight, outerRadius: plateHeight, height: plateWidth)
+        outerGeometry.firstMaterial?.diffuse.contents = color
+        let outerNode = SCNNode(geometry: outerGeometry)
+        outerNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        outerNode.position = SCNVector3(x: weightOffsetX, y: 0.0, z: 0.0)
 
-        myScene.scene?.rootNode.addChildNode(cylinderNode)
+        let connectorGeometry = SCNTube(innerRadius: innerHeight, outerRadius: outerHeight, height: plateWidth / 8)
+        connectorGeometry.firstMaterial?.diffuse.contents = color
+        let connectorNode = SCNNode(geometry: connectorGeometry)
+        connectorNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        connectorNode.position = SCNVector3(x: weightOffsetX, y: 0.0, z: 0.0)
+
+        weightOffsetX -= Float(plateWidth + 1)
+        myScene.scene?.rootNode.addChildNode(innerNode)
+        myScene.scene?.rootNode.addChildNode(outerNode)
+        myScene.scene?.rootNode.addChildNode(connectorNode)
     }
 
     func clearPlates() {
@@ -100,13 +115,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         for node in nodes ?? [] {
             node.removeFromParentNode()
         }
+        weightOffsetX = 0
     }
 
-    //MARK: Delegates
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
-        return String(pickerData[row])
-    }
-    
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         
         var platesNeeded = [Double]()
@@ -126,7 +137,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         drawBar()
         for (index, weight) in enumerate(platesNeeded) {
             let size = Float(plates.count - (find(plates, weight)!))
-            drawPlate(-1 * (index + 1), size: size)
+            drawPlate(size)
         }
 
         myLabel.text = platesNeeded.description

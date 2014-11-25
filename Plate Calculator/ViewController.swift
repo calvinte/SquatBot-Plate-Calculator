@@ -15,6 +15,10 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     @IBOutlet weak var myLabel: UILabel!
     @IBOutlet weak var myScene: SCNView!
 
+    @IBAction func handlePan(recognizer:UIPanGestureRecognizer) {
+        println("panning?")
+    }
+
     var pickerData = Array(45...1000).filter { (number) in number % 5 == 0 }
     var plates = [45.0,35.0,25.0,10.0,5.0,2.5]
     var barWeight = 45.0
@@ -30,6 +34,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         
         myScene.scene = SCNScene()
         myScene.autoenablesDefaultLighting = true
+        myScene.antialiasingMode = SCNAntialiasingMode.Multisampling4X
         //myScene.allowsCameraControl = true
 
         drawCamera()
@@ -55,7 +60,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     }
 
     func drawBar() {
-        // IWF spec @see: http://en.wikipedia.org/wiki/Barbell
+        // IWF spec(ish) @see: http://en.wikipedia.org/wiki/Barbell
         let barWidth = CGFloat(2.8)
         let barHeight = CGFloat(131)
         let collarHeight = CGFloat(44.5)

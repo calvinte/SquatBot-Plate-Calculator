@@ -64,52 +64,113 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let barWidth = CGFloat(2.8)
         let barHeight = CGFloat(131)
         let collarHeight = CGFloat(44.5)
-        let color = UIColor(hue: 0, saturation: 0, brightness: 0.7, alpha: 1.0)
+        let color = UIColor.lightGrayColor()
+        let bumperSize:CGFloat = 3
+        let collarInner = collarWidth/2 - 0.5
+        let collarLength = collarHeight - bumperSize
 
-        let barGeometry = SCNCylinder(radius: barWidth, height: barHeight)
+        let barGeometry = SCNCylinder(radius: barWidth/2, height: barHeight)
         barGeometry.firstMaterial?.diffuse.contents = color
         let barNode = SCNNode(geometry: barGeometry)
         barNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
         let barX = Float(barHeight/2)
         barNode.position = SCNVector3(x: barX, y: 0.0, z: 0.0)
 
-        let collarGeometry = SCNCylinder(radius: collarWidth, height: collarHeight)
+        let bumperGeometry = SCNCylinder(radius: collarWidth/2 + 1, height: bumperSize)
+        bumperGeometry.firstMaterial?.diffuse.contents = color
+        let bumperNode = SCNNode(geometry: bumperGeometry)
+        bumperNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        let bumperX = -0.5 * Float(bumperSize)
+        bumperNode.position = SCNVector3(x: bumperX, y: 0.0, z: 0.0)
+        weightOffsetX -= Float(bumperSize)
+
+        let collarGeometry = SCNTube(innerRadius: collarInner, outerRadius: collarWidth/2, height: collarLength)
         collarGeometry.firstMaterial?.diffuse.contents = color
         let collarNode = SCNNode(geometry: collarGeometry)
         collarNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
-        let collarX = -0.5 * Float(collarHeight)
+        let collarX = -0.5 * Float(collarHeight - bumperSize) - Float(bumperSize)
         collarNode.position = SCNVector3(x: collarX, y: 0.0, z: 0.0)
 
+        let collarInnerGeometry = SCNCylinder(radius: collarInner, height: collarLength - 1)
+        collarInnerGeometry.firstMaterial?.diffuse.contents = UIColor.darkGrayColor()
+        let collarInnerNode = SCNNode(geometry: collarInnerGeometry)
+        collarInnerNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        collarInnerNode.position = SCNVector3(x: collarX, y: 0.0, z: 0.0)
+
+        let collarBadgeHeight:CGFloat = 0.75
+        let collarBadgeGeometry = SCNCylinder(radius: collarInner - 0.5, height: collarBadgeHeight)
+        collarBadgeGeometry.firstMaterial?.diffuse.contents = UIColor.lightGrayColor()
+        let collarBadgeNode = SCNNode(geometry: collarBadgeGeometry)
+        collarBadgeNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        collarBadgeNode.position = SCNVector3(x: collarX - Float(collarLength)/2 + 0.5, y: 0.0, z: 0.0)
+
         myScene.scene?.rootNode.addChildNode(barNode)
+        myScene.scene?.rootNode.addChildNode(bumperNode)
         myScene.scene?.rootNode.addChildNode(collarNode)
+        myScene.scene?.rootNode.addChildNode(collarInnerNode)
+        myScene.scene?.rootNode.addChildNode(collarBadgeNode)
     }
 
-    func drawPlate(size: Float) {
-        let plateHeight = CGFloat((size / 6 + 0.125) * 45)
-        let plateWidth = plateHeight * 0.1
-        let color = UIColor(hue: 0, saturation: 0, brightness: 0.3, alpha: 1.0)
-        let innerHeight = collarWidth + 4
-        let outerHeight = plateHeight - 2
+    func drawPlate(weight: Double) {
+        let size = Float(plates.count - (find(plates, weight)!))
+        let plateHeight = CGFloat((size / 6 + 0.5) / 2 * 45)
+        let plateWidth = plateHeight * 0.125
+        let color = UIColor.darkGrayColor()
+        let innerHeight = collarWidth/2 + 4
+        let outerHeight = plateHeight - 1
+        let rotationVector = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI_2))
+        weightOffsetX -= Float(plateWidth/2)
+        let positionVector = SCNVector3(x: weightOffsetX, y: 0.0, z: 0.0)
+        let thickness = plateWidth / 4
 
-        let innerGeometry = SCNTube(innerRadius: collarWidth + 0.2, outerRadius: innerHeight, height: plateWidth)
+        let innerGeometry = SCNTube(innerRadius: collarWidth/2 + 0.2, outerRadius: innerHeight, height: plateWidth)
         innerGeometry.firstMaterial?.diffuse.contents = color
         let innerNode = SCNNode(geometry: innerGeometry)
-        innerNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
-        innerNode.position = SCNVector3(x: weightOffsetX, y: 0.0, z: 0.0)
+        innerNode.rotation = rotationVector
+        innerNode.position = positionVector
 
         let outerGeometry = SCNTube(innerRadius: outerHeight, outerRadius: plateHeight, height: plateWidth)
         outerGeometry.firstMaterial?.diffuse.contents = color
         let outerNode = SCNNode(geometry: outerGeometry)
-        outerNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
-        outerNode.position = SCNVector3(x: weightOffsetX, y: 0.0, z: 0.0)
+        outerNode.rotation = rotationVector
+        outerNode.position = positionVector
 
-        let connectorGeometry = SCNTube(innerRadius: innerHeight, outerRadius: outerHeight, height: plateWidth / 8)
+        let connectorGeometry = SCNTube(innerRadius: innerHeight, outerRadius: outerHeight, height: thickness)
         connectorGeometry.firstMaterial?.diffuse.contents = color
         let connectorNode = SCNNode(geometry: connectorGeometry)
-        connectorNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
-        connectorNode.position = SCNVector3(x: weightOffsetX, y: 0.0, z: 0.0)
+        connectorNode.rotation = rotationVector
+        connectorNode.position = positionVector
 
-        weightOffsetX -= Float(plateWidth + 1)
+        let weightFormatter = NSNumberFormatter()
+        weightFormatter.maximumFractionDigits = 1
+        weightFormatter.minimumFractionDigits = 0
+        var fontSize:CGFloat
+        if (weight < 5) {
+            fontSize = 2
+        } else {
+            fontSize = 3
+        }
+        let textGeometry = SCNText(string: weightFormatter.stringFromNumber(weight)!, extrusionDepth: thickness)
+        textGeometry.containerFrame = CGRect(x: 0, y: 0, width:plateHeight, height:plateHeight * 0.75)
+        textGeometry.font = UIFont (name: "Courier", size: fontSize)
+        textGeometry.firstMaterial?.diffuse.contents = UIColor.lightGrayColor()
+        //BUG: textGeometry.alignmentMode = kCAAlignmentCenter
+
+        for r in [-1,1] {
+            let textNode = SCNNode(geometry: textGeometry)
+            let offset = Float(weightOffsetX) + Float(r) * Float(thickness) / 2
+            textNode.rotation = SCNVector4(x: 0, y: Float(r), z: 0, w: Float(M_PI_2))
+            textNode.position = SCNVector3(x: offset, y: 0.0, z: 0.0)
+            // When SCNText.alignmentMode is fixed, don't do this
+            if (weight < 10) {
+                textNode.pivot = SCNMatrix4MakeTranslation(1.5, 0, 0) // One character
+            } else {
+                textNode.pivot = SCNMatrix4MakeTranslation(3, 0, 0) // Two characters
+            }
+            myScene.scene?.rootNode.addChildNode(textNode)
+        }
+
+        weightOffsetX -= Float(plateWidth/2 + 1)
         myScene.scene?.rootNode.addChildNode(innerNode)
         myScene.scene?.rootNode.addChildNode(outerNode)
         myScene.scene?.rootNode.addChildNode(connectorNode)
@@ -121,6 +182,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             node.removeFromParentNode()
         }
         weightOffsetX = 0
+        drawCamera()
+        drawBar()
     }
 
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
@@ -138,11 +201,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         }
         
         clearPlates()
-        drawCamera()
-        drawBar()
         for (index, weight) in enumerate(platesNeeded) {
-            let size = Float(plates.count - (find(plates, weight)!))
-            drawPlate(size)
+            drawPlate(weight)
         }
 
         myLabel.text = platesNeeded.description

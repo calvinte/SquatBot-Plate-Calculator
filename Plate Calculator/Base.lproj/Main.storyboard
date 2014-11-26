@@ -33,7 +33,6 @@
                             </sceneKitView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="ltJ-jc-SAx" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="8iW-Wc-9Ai"/>
                             <constraint firstAttribute="bottom" secondItem="ltJ-jc-SAx" secondAttribute="bottom" constant="20" symbolic="YES" id="H0y-QY-elo"/>
@@ -45,9 +44,6 @@
                             <constraint firstItem="Tgs-A3-XaA" firstAttribute="top" secondItem="F0G-Xa-yXr" secondAttribute="bottom" constant="8" symbolic="YES" id="xS9-k7-gTJ"/>
                             <constraint firstAttribute="trailing" secondItem="ltJ-jc-SAx" secondAttribute="trailing" id="zc8-Ql-qZV"/>
                         </constraints>
-                        <connections>
-                            <outletCollection property="gestureRecognizers" destination="tl1-zv-huF" appends="YES" id="Tsy-ID-56r"/>
-                        </connections>
                     </view>
                     <connections>
                         <outlet property="myLabel" destination="Tgs-A3-XaA" id="lwp-Wq-Kcx"/>
@@ -55,7 +51,6 @@
                         <outlet property="myScene" destination="F0G-Xa-yXr" id="yQ6-Oo-GAC"/>
                     </connections>
                 </viewController>
-                <panGestureRecognizer minimumNumberOfTouches="1" id="tl1-zv-huF"/>
             </objects>
         </scene>
     </scenes>

@@ -6,6 +6,10 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     @IBOutlet weak var myPicker: UIPickerView!
     @IBOutlet weak var myLabel: UILabel!
     @IBOutlet weak var myScene: SCNView!
+    @IBOutlet var myPan: UIPanGestureRecognizer!
+    @IBAction func handleGesture(sender: AnyObject) {
+        println("Panning?")
+    }
 
     var pickerData = Array(45...1000).filter { (number) in number % 5 == 0 }
     var plates = [45.0,35.0,25.0,10.0,5.0,2.5]
@@ -145,23 +149,30 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         textGeometry.firstMaterial?.diffuse.contents = UIColor.lightGrayColor()
         //BUG: textGeometry.alignmentMode = kCAAlignmentCenter
 
-        let textNode = SCNNode(geometry: textGeometry)
-        let offset = Float(weightOffsetX) + Float(-1) * Float(thickness) / 2
-        //Float(r)
-        textNode.rotation = SCNVector4(x: 1, y: 0, z: 0, w: Float(M_PI_2))
-        textNode.position = SCNVector3(x: 0, y: offset, z: 0.0)
-        // When SCNText.alignmentMode is fixed, don't do this
-        if (weight < 10) {
-            textNode.pivot = SCNMatrix4MakeTranslation(1.5, Float(plateHeight)*0.75, 0) // One character
-        } else {
-            textNode.pivot = SCNMatrix4MakeTranslation(3, Float(plateHeight)*0.75, 0) // Two characters
+        for r in 1...3 {
+            let textNode = SCNNode(geometry: textGeometry)
+            let offset = Float(weightOffsetX) + Float(-1) * Float(thickness) / 2
+            //Float(r)
+            //textNode.rotation = SCNVector4(x: 1, y: 0, z: 0, w: Float(M_PI_2))
+            textNode.eulerAngles = SCNVector3(x: Float(DegreesToRadians(90)), y: Float(DegreesToRadians(360.0/3 * Double(r))), z: 0.0)
+            textNode.position = SCNVector3(x: 0, y: offset, z: 0.0)
+            // When SCNText.alignmentMode is fixed, don't do this
+            if (weight < 10) {
+                textNode.pivot = SCNMatrix4MakeTranslation(1.5, Float(plateHeight)*0.75, 0) // One character
+            } else {
+                textNode.pivot = SCNMatrix4MakeTranslation(3, Float(plateHeight)*0.75, 0) // Two characters
+            }
+            myScene.scene?.rootNode.addChildNode(textNode)
         }
-        myScene.scene?.rootNode.addChildNode(textNode)
 
         weightOffsetX -= Float(plateWidth/2 + 1)
         myScene.scene?.rootNode.addChildNode(innerNode)
         myScene.scene?.rootNode.addChildNode(outerNode)
         myScene.scene?.rootNode.addChildNode(connectorNode)
+    }
+
+    func DegreesToRadians (value:Double) -> Double {
+        return value * M_PI / 180.0
     }
 
     func clearPlates() {

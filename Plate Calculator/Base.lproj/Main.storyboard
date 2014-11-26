@@ -30,6 +30,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="381"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="088-ye-z00" appends="YES" id="onP-dH-ter"/>
+                                </connections>
                             </sceneKitView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -47,10 +50,12 @@
                     </view>
                     <connections>
                         <outlet property="myLabel" destination="Tgs-A3-XaA" id="lwp-Wq-Kcx"/>
+                        <outlet property="myPan" destination="088-ye-z00" id="dFh-cm-elL"/>
                         <outlet property="myPicker" destination="ltJ-jc-SAx" id="GAq-Lt-Yuh"/>
                         <outlet property="myScene" destination="F0G-Xa-yXr" id="yQ6-Oo-GAC"/>
                     </connections>
                 </viewController>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="088-ye-z00"/>
             </objects>
         </scene>
     </scenes>

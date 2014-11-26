@@ -1,11 +1,3 @@
-//
-//  ViewController.swift
-//  SwiftUIPickerFormatted
-//
-//  Created by Steven Lipton on 10/20/14.
-//  Copyright (c) 2014 MakeAppPie.Com. All rights reserved.
-//
-
 import UIKit
 import SceneKit
 
@@ -14,10 +6,6 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     @IBOutlet weak var myPicker: UIPickerView!
     @IBOutlet weak var myLabel: UILabel!
     @IBOutlet weak var myScene: SCNView!
-
-    @IBAction func handlePan(recognizer:UIPanGestureRecognizer) {
-        println("panning?")
-    }
 
     var pickerData = Array(45...1000).filter { (number) in number % 5 == 0 }
     var plates = [45.0,35.0,25.0,10.0,5.0,2.5]
@@ -31,7 +19,6 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         myPicker.delegate = self
         myPicker.dataSource = self
 
-        
         myScene.scene = SCNScene()
         myScene.autoenablesDefaultLighting = true
         myScene.antialiasingMode = SCNAntialiasingMode.Multisampling4X
@@ -55,7 +42,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         var cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         cameraNode.camera?.zFar = 1000
-        cameraNode.position = SCNVector3(x: -30, y: 0, z: 130)
+        cameraNode.position = SCNVector3(x: 0, y: -30, z: 130)
+        cameraNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI_2))
         myScene.scene?.rootNode.addChildNode(cameraNode)
     }
 
@@ -68,41 +56,42 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let bumperSize:CGFloat = 3
         let collarInner = collarWidth/2 - 0.5
         let collarLength = collarHeight - bumperSize
+        let rotationVector = SCNVector4(x: 0, y: 0, z: 0, w: 0)
 
         let barGeometry = SCNCylinder(radius: barWidth/2, height: barHeight)
         barGeometry.firstMaterial?.diffuse.contents = color
         let barNode = SCNNode(geometry: barGeometry)
-        barNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        barNode.rotation = rotationVector
         let barX = Float(barHeight/2)
-        barNode.position = SCNVector3(x: barX, y: 0.0, z: 0.0)
+        barNode.position = SCNVector3(x: 0, y: barX, z: 0.0)
 
         let bumperGeometry = SCNCylinder(radius: collarWidth/2 + 1, height: bumperSize)
         bumperGeometry.firstMaterial?.diffuse.contents = color
         let bumperNode = SCNNode(geometry: bumperGeometry)
-        bumperNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        bumperNode.rotation = rotationVector
         let bumperX = -0.5 * Float(bumperSize)
-        bumperNode.position = SCNVector3(x: bumperX, y: 0.0, z: 0.0)
+        bumperNode.position = SCNVector3(x: 0, y: bumperX, z: 0.0)
         weightOffsetX -= Float(bumperSize)
 
         let collarGeometry = SCNTube(innerRadius: collarInner, outerRadius: collarWidth/2, height: collarLength)
         collarGeometry.firstMaterial?.diffuse.contents = color
         let collarNode = SCNNode(geometry: collarGeometry)
-        collarNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
+        collarNode.rotation = rotationVector
         let collarX = -0.5 * Float(collarHeight - bumperSize) - Float(bumperSize)
-        collarNode.position = SCNVector3(x: collarX, y: 0.0, z: 0.0)
+        collarNode.position = SCNVector3(x: 0, y: collarX, z: 0.0)
 
         let collarInnerGeometry = SCNCylinder(radius: collarInner, height: collarLength - 1)
         collarInnerGeometry.firstMaterial?.diffuse.contents = UIColor.darkGrayColor()
         let collarInnerNode = SCNNode(geometry: collarInnerGeometry)
-        collarInnerNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
-        collarInnerNode.position = SCNVector3(x: collarX, y: 0.0, z: 0.0)
+        collarInnerNode.rotation = rotationVector
+        collarInnerNode.position = SCNVector3(x: 0, y: collarX, z: 0.0)
 
         let collarBadgeHeight:CGFloat = 0.75
         let collarBadgeGeometry = SCNCylinder(radius: collarInner - 0.5, height: collarBadgeHeight)
         collarBadgeGeometry.firstMaterial?.diffuse.contents = UIColor.lightGrayColor()
         let collarBadgeNode = SCNNode(geometry: collarBadgeGeometry)
-        collarBadgeNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI / 2))
-        collarBadgeNode.position = SCNVector3(x: collarX - Float(collarLength)/2 + 0.5, y: 0.0, z: 0.0)
+        collarBadgeNode.rotation = rotationVector
+        collarBadgeNode.position = SCNVector3(x: 0, y: collarX - Float(collarLength)/2 + 0.5, z: 0.0)
 
         myScene.scene?.rootNode.addChildNode(barNode)
         myScene.scene?.rootNode.addChildNode(bumperNode)
@@ -118,9 +107,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let color = UIColor.darkGrayColor()
         let innerHeight = collarWidth/2 + 4
         let outerHeight = plateHeight - 1
-        let rotationVector = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI_2))
+        let rotationVector = SCNVector4(x: 0, y: 0, z: 0, w: 0)
         weightOffsetX -= Float(plateWidth/2)
-        let positionVector = SCNVector3(x: weightOffsetX, y: 0.0, z: 0.0)
+        let positionVector = SCNVector3(x: 0, y: weightOffsetX, z: 0.0)
         let thickness = plateWidth / 4
 
         let innerGeometry = SCNTube(innerRadius: collarWidth/2 + 0.2, outerRadius: innerHeight, height: plateWidth)
@@ -151,24 +140,23 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             fontSize = 3
         }
         let textGeometry = SCNText(string: weightFormatter.stringFromNumber(weight)!, extrusionDepth: thickness)
-        textGeometry.containerFrame = CGRect(x: 0, y: 0, width:plateHeight, height:plateHeight * 0.75)
+        //textGeometry.containerFrame = CGRect(x: 0, y: 0, width:plateHeight, height:plateHeight * 0.75)
         textGeometry.font = UIFont (name: "Courier", size: fontSize)
         textGeometry.firstMaterial?.diffuse.contents = UIColor.lightGrayColor()
         //BUG: textGeometry.alignmentMode = kCAAlignmentCenter
 
-        for r in [-1,1] {
-            let textNode = SCNNode(geometry: textGeometry)
-            let offset = Float(weightOffsetX) + Float(r) * Float(thickness) / 2
-            textNode.rotation = SCNVector4(x: 0, y: Float(r), z: 0, w: Float(M_PI_2))
-            textNode.position = SCNVector3(x: offset, y: 0.0, z: 0.0)
-            // When SCNText.alignmentMode is fixed, don't do this
-            if (weight < 10) {
-                textNode.pivot = SCNMatrix4MakeTranslation(1.5, 0, 0) // One character
-            } else {
-                textNode.pivot = SCNMatrix4MakeTranslation(3, 0, 0) // Two characters
-            }
-            myScene.scene?.rootNode.addChildNode(textNode)
+        let textNode = SCNNode(geometry: textGeometry)
+        let offset = Float(weightOffsetX) + Float(-1) * Float(thickness) / 2
+        //Float(r)
+        textNode.rotation = SCNVector4(x: 1, y: 0, z: 0, w: Float(M_PI_2))
+        textNode.position = SCNVector3(x: 0, y: offset, z: 0.0)
+        // When SCNText.alignmentMode is fixed, don't do this
+        if (weight < 10) {
+            textNode.pivot = SCNMatrix4MakeTranslation(1.5, Float(plateHeight)*0.75, 0) // One character
+        } else {
+            textNode.pivot = SCNMatrix4MakeTranslation(3, Float(plateHeight)*0.75, 0) // Two characters
         }
+        myScene.scene?.rootNode.addChildNode(textNode)
 
         weightOffsetX -= Float(plateWidth/2 + 1)
         myScene.scene?.rootNode.addChildNode(innerNode)

@@ -91,6 +91,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
 
     func drawBar() {
         // IWF spec(ish) @see: http://en.wikipedia.org/wiki/Barbell
+        let barNode = SCNNode()
         let barWidth = CGFloat(2.8)
         let barHeight = CGFloat(131)
         let collarHeight = CGFloat(44.5)
@@ -102,10 +103,10 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
 
         let barGeometry = SCNCylinder(radius: barWidth/2, height: barHeight)
         barGeometry.firstMaterial?.diffuse.contents = color
-        let barNode = SCNNode(geometry: barGeometry)
-        barNode.rotation = rotationVector
+        let handleNode = SCNNode(geometry: barGeometry)
+        handleNode.rotation = rotationVector
         let barX = Float(barHeight/2)
-        barNode.position = SCNVector3(x: 0, y: barX, z: 0.0)
+        handleNode.position = SCNVector3(x: 0, y: barX, z: 0.0)
 
         let bumperGeometry = SCNCylinder(radius: collarWidth/2 + 1, height: bumperSize)
         bumperGeometry.firstMaterial?.diffuse.contents = color
@@ -135,17 +136,18 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         collarBadgeNode.rotation = rotationVector
         collarBadgeNode.position = SCNVector3(x: 0, y: collarX - Float(collarLength)/2 + 0.5, z: 0.0)
 
+        barNode.addChildNode(handleNode)
+        barNode.addChildNode(bumperNode)
+        barNode.addChildNode(collarNode)
+        barNode.addChildNode(collarInnerNode)
+        barNode.addChildNode(collarBadgeNode)
         myScene.scene?.rootNode.addChildNode(barNode)
-        myScene.scene?.rootNode.addChildNode(bumperNode)
-        myScene.scene?.rootNode.addChildNode(collarNode)
-        myScene.scene?.rootNode.addChildNode(collarInnerNode)
-        myScene.scene?.rootNode.addChildNode(collarBadgeNode)
     }
 
     func drawPlate(weight: Double) {
         let plateNode = SCNNode()
         let size = Float(plates.count - find(plates, weight)!)
-        let plateHeight = CGFloat((size / 6 + 0.4) / 2 * 45)
+        let plateHeight = CGFloat((size / 6 + 0.35) / 2 * 45)
         let plateWidth = plateHeight * 0.125
         let color = UIColor.darkGrayColor()
         let innerHeight = collarWidth/2 + 4

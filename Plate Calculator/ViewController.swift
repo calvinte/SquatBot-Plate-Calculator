@@ -40,6 +40,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     let collarWidth:CGFloat = 5
     var weightOffsetX:Float = 0
 
+    let platesNode = SCNNode()
+
     let cameraNode = SCNNode()
     let originCameraEulerY:Double = 0
     let destCameraEulerY:Double = -60
@@ -64,6 +66,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
 
         drawCamera()
         drawBar()
+        myScene.scene?.rootNode.addChildNode(platesNode)
     }
     
     //MARK: - Delegates and datasources
@@ -140,6 +143,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     }
 
     func drawPlate(weight: Double) {
+        let plateNode = SCNNode()
         let size = Float(plates.count - find(plates, weight)!)
         let plateHeight = CGFloat((size / 6 + 0.5) / 2 * 45)
         let plateWidth = plateHeight * 0.125
@@ -188,13 +192,14 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             textNode.position = SCNVector3(x: 0, y: offset, z: 0.0)
             // When SCNText.alignmentMode is fixed, don't do this
             textNode.pivot = SCNMatrix4MakeTranslation(Float(Int(fontSize) / 3 * weightString.utf16Count), Float(plateHeight)*0.75, 0)
-            myScene.scene?.rootNode.addChildNode(textNode)
+            plateNode.addChildNode(textNode)
         }
 
         weightOffsetX -= Float(plateWidth/2 + 1)
-        myScene.scene?.rootNode.addChildNode(innerNode)
-        myScene.scene?.rootNode.addChildNode(outerNode)
-        myScene.scene?.rootNode.addChildNode(connectorNode)
+        plateNode.addChildNode(innerNode)
+        plateNode.addChildNode(outerNode)
+        plateNode.addChildNode(connectorNode)
+        platesNode.addChildNode(plateNode)
     }
 
     func DegreesToRadians (value:Double) -> Double {
@@ -202,13 +207,11 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     }
 
     func clearPlates() {
-        let nodes = myScene.scene?.rootNode.childNodes
+        let nodes = platesNode.childNodes
         for node in nodes ?? [] {
             node.removeFromParentNode()
         }
         weightOffsetX = 0
-        drawCamera()
-        drawBar()
     }
 
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {

@@ -21,6 +21,17 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         cameraNode.eulerAngles.y = Float(DegreesToRadians(Double(Float(originCameraEulerY) + deltaEuler)))
         cameraNode.position.y = originCameraPositionY + deltaPosiY
         cameraNode.position.z = originCameraPositionZ + deltaPosiZ
+        if (recognizer.state == UIGestureRecognizerState.Ended) {
+            let moveAction = SCNAction.moveTo(originCameraPosition, duration:0.3)
+            let rotateAction = SCNAction.rotateToX(
+                CGFloat(DegreesToRadians(0)),
+                y:CGFloat(DegreesToRadians(originCameraEulerY)),
+                z:CGFloat(DegreesToRadians(originCameraEulerZ)),
+                duration:0.3
+            )
+            cameraNode.runAction(moveAction)
+            cameraNode.runAction(rotateAction)
+        }
     }
 
     let pickerData = Array(45...1000).filter { (number) in number % 5 == 0 }
@@ -32,16 +43,19 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     let cameraNode = SCNNode()
     let originCameraEulerY:Double = 0
     let destCameraEulerY:Double = -60
+    let originCameraEulerZ:Double = 90
     let originCameraPositionY:Float = -30
     let destCameraPositionY:Float = -200
     let originCameraPositionZ:Float = 130
     let destCameraPositionZ:Float = 0
+    var originCameraPosition:SCNVector3!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         myLabel.text = "0"
         myPicker.delegate = self
         myPicker.dataSource = self
+        originCameraPosition = SCNVector3(x: 0, y: originCameraPositionY, z: originCameraPositionZ)
 
         myScene.scene = SCNScene()
         myScene.autoenablesDefaultLighting = true
@@ -65,9 +79,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     func drawCamera() {
         cameraNode.camera = SCNCamera()
         cameraNode.camera?.zFar = 1000
-        cameraNode.position = SCNVector3(x: 0, y: originCameraPositionY, z: originCameraPositionZ)
+        cameraNode.position = originCameraPosition
         //cameraNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI_2))
-        cameraNode.eulerAngles = SCNVector3(x: 0, y: Float(DegreesToRadians(originCameraEulerY)), z: Float(DegreesToRadians(90)))
+        cameraNode.eulerAngles = SCNVector3(x: 0, y: Float(DegreesToRadians(originCameraEulerY)), z: Float(DegreesToRadians(originCameraEulerZ)))
 
         myScene.scene?.rootNode.addChildNode(cameraNode)
     }

@@ -140,7 +140,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     }
 
     func drawPlate(weight: Double) {
-        let size = Float(plates.count - (find(plates, weight)!))
+        let size = Float(plates.count - find(plates, weight)!)
         let plateHeight = CGFloat((size / 6 + 0.5) / 2 * 45)
         let plateWidth = plateHeight * 0.125
         let color = UIColor.darkGrayColor()
@@ -172,13 +172,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         let weightFormatter = NSNumberFormatter()
         weightFormatter.maximumFractionDigits = 1
         weightFormatter.minimumFractionDigits = 0
-        var fontSize:CGFloat
-        if (weight < 5) {
-            fontSize = 2
-        } else {
-            fontSize = 3
-        }
-        let textGeometry = SCNText(string: weightFormatter.stringFromNumber(weight)!, extrusionDepth: thickness)
+        let weightString = weightFormatter.stringFromNumber(weight)!
+        var fontSize = CGFloat(2 + plates.count - find(plates, weight)!)
+        let textGeometry = SCNText(string: weightString, extrusionDepth: thickness)
         //textGeometry.containerFrame = CGRect(x: 0, y: 0, width:plateHeight, height:plateHeight * 0.75)
         textGeometry.font = UIFont (name: "Courier", size: fontSize)
         textGeometry.firstMaterial?.diffuse.contents = UIColor.lightGrayColor()
@@ -191,11 +187,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             textNode.eulerAngles = SCNVector3(x: Float(DegreesToRadians(90)), y: Float(DegreesToRadians(360.0/3 * Double(r))), z: 0.0)
             textNode.position = SCNVector3(x: 0, y: offset, z: 0.0)
             // When SCNText.alignmentMode is fixed, don't do this
-            if (weight < 10) {
-                textNode.pivot = SCNMatrix4MakeTranslation(1.5, Float(plateHeight)*0.75, 0) // One character
-            } else {
-                textNode.pivot = SCNMatrix4MakeTranslation(3, Float(plateHeight)*0.75, 0) // Two characters
-            }
+            textNode.pivot = SCNMatrix4MakeTranslation(Float(Int(fontSize) / 3 * weightString.utf16Count), Float(plateHeight)*0.75, 0)
             myScene.scene?.rootNode.addChildNode(textNode)
         }
 

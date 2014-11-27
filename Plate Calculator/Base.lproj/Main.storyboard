@@ -7,7 +7,6 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Plate_Calculator" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
@@ -55,7 +54,12 @@
                         <outlet property="myScene" destination="F0G-Xa-yXr" id="yQ6-Oo-GAC"/>
                     </connections>
                 </viewController>
-                <panGestureRecognizer minimumNumberOfTouches="1" id="088-ye-z00"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="088-ye-z00">
+                    <connections>
+                        <action selector="handleGesture:" destination="BYZ-38-t0r" id="fZM-Mt-Dtb"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
         </scene>
     </scenes>

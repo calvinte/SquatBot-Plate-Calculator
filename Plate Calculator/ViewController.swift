@@ -22,6 +22,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             cameraNode.eulerAngles.y = Float(DegreesToRadians(Double(Float(originCameraEulerY) + deltaEuler)))
             cameraNode.position.y = originCameraPositionY + deltaPosiY
             cameraNode.position.z = originCameraPositionZ + deltaPosiZ
+            legendNode.opacity = CGFloat(progress)
         }
         platesNode.eulerAngles.y = Float(DegreesToRadians(Double(panX)))
 
@@ -34,8 +35,10 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
                 z:CGFloat(DegreesToRadians(originCameraEulerZ)),
                 duration:0.3
             )
+            let opacityAction = SCNAction.fadeOpacityTo(0, duration:0.3)
             cameraNode.runAction(moveAction)
             cameraNode.runAction(rotateAction)
+            legendNode.runAction(opacityAction)
         }
     }
 
@@ -46,10 +49,11 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     var weightOffsetX:Float = 0
 
     let platesNode = SCNNode()
+    let legendNode = SCNNode()
+    let cameraNode = SCNNode()
 
     var deltaPanX:CGFloat = 0
 
-    let cameraNode = SCNNode()
     let originCameraEulerY:Double = 0
     let destCameraEulerY:Double = -60
     let originCameraEulerZ:Double = 90
@@ -59,7 +63,11 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     let destCameraPositionZ:Float = 0
     var originCameraPosition:SCNVector3!
 
+    let weightFormatter = NSNumberFormatter()
+
     override func viewDidLoad() {
+        weightFormatter.maximumFractionDigits = 1
+        weightFormatter.minimumFractionDigits = 0
         super.viewDidLoad()
         myLabel.text = "0"
         myPicker.delegate = self
@@ -73,6 +81,9 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
 
         drawCamera()
         drawBar()
+        drawLegend([])
+        legendNode.opacity = 0
+        myScene.scene?.rootNode.addChildNode(legendNode)
         myScene.scene?.rootNode.addChildNode(platesNode)
     }
     
@@ -182,9 +193,6 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         connectorNode.rotation = rotationVector
         connectorNode.position = positionVector
 
-        let weightFormatter = NSNumberFormatter()
-        weightFormatter.maximumFractionDigits = 1
-        weightFormatter.minimumFractionDigits = 0
         let weightString = weightFormatter.stringFromNumber(weight)!
         var fontSize = CGFloat(1 + plates.count - find(plates, weight)!)
         let textGeometry = SCNText(string: weightString, extrusionDepth: thickness)
@@ -210,6 +218,35 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         plateNode.addChildNode(outerNode)
         plateNode.addChildNode(connectorNode)
         platesNode.addChildNode(plateNode)
+    }
+
+    func drawLegend(plates:[Double]) {
+        let nodes = legendNode.childNodes
+        for node in nodes ?? [] {  node.removeFromParentNode() }
+        var quantityPlates =  Dictionary<Double, Int>()
+        for plate in plates {
+            if (quantityPlates[plate] == nil) { quantityPlates[plate] = 0 }
+            quantityPlates[plate]! += 1
+        }
+        var i = 0
+        for (weight, quantity) in quantityPlates {
+            var line:String = weightFormatter.stringFromNumber(weight)! + " x " + String(quantity)
+            let textGeometry = SCNText(string: line, extrusionDepth: 0)
+            //textGeometry.containerFrame = CGRect(x: 0, y: 0, width:plateHeight, height:plateHeight * 0.75)
+            textGeometry.font = UIFont.systemFontOfSize(12)
+            textGeometry.firstMaterial?.diffuse.contents = UIColor.darkTextColor()
+
+            let rotationOffset = Double(arc4random_uniform(59))
+            let textNode = SCNNode(geometry: textGeometry)
+            textNode.eulerAngles = SCNVector3(x: Float(DegreesToRadians(90)), y: Float(DegreesToRadians(-90)), z: 0.0)
+            //textNode.position = SCNVector3(x: 0, y: offset, z: 0.0)
+            // When SCNText.alignmentMode is fixed, don't do this
+            textNode.pivot = SCNMatrix4MakeTranslation(100, -50 + Float(i) * 12, 0)
+            //plateNode.addChildNode(textNode)
+            legendNode.addChildNode(textNode)
+            i++
+        }
+
     }
 
     func DegreesToRadians (value:Double) -> Double {
@@ -242,6 +279,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         for (index, weight) in enumerate(platesNeeded) {
             drawPlate(weight)
         }
+        drawLegend(platesNeeded)
 
         myLabel.text = platesNeeded.description
     }

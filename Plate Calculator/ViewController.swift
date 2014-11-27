@@ -145,7 +145,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     func drawPlate(weight: Double) {
         let plateNode = SCNNode()
         let size = Float(plates.count - find(plates, weight)!)
-        let plateHeight = CGFloat((size / 6 + 0.5) / 2 * 45)
+        let plateHeight = CGFloat((size / 6 + 0.4) / 2 * 45)
         let plateWidth = plateHeight * 0.125
         let color = UIColor.darkGrayColor()
         let innerHeight = collarWidth/2 + 4
@@ -177,7 +177,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         weightFormatter.maximumFractionDigits = 1
         weightFormatter.minimumFractionDigits = 0
         let weightString = weightFormatter.stringFromNumber(weight)!
-        var fontSize = CGFloat(2 + plates.count - find(plates, weight)!)
+        var fontSize = CGFloat(1 + plates.count - find(plates, weight)!)
         let textGeometry = SCNText(string: weightString, extrusionDepth: thickness)
         //textGeometry.containerFrame = CGRect(x: 0, y: 0, width:plateHeight, height:plateHeight * 0.75)
         textGeometry.font = UIFont (name: "Courier", size: fontSize)
@@ -191,7 +191,7 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
             textNode.eulerAngles = SCNVector3(x: Float(DegreesToRadians(90)), y: Float(DegreesToRadians(360.0/3 * Double(r))), z: 0.0)
             textNode.position = SCNVector3(x: 0, y: offset, z: 0.0)
             // When SCNText.alignmentMode is fixed, don't do this
-            textNode.pivot = SCNMatrix4MakeTranslation(Float(Int(fontSize) / 3 * weightString.utf16Count), Float(plateHeight)*0.75, 0)
+            textNode.pivot = SCNMatrix4MakeTranslation(Float(Double(fontSize) / 2.75 * Double(weightString.utf16Count)), Float(plateHeight)*0.75, 0)
             plateNode.addChildNode(textNode)
         }
 

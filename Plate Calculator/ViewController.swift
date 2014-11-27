@@ -10,18 +10,23 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     @IBAction func handleGesture(recognizer: UIPanGestureRecognizer!) {
         let translation = recognizer.translationInView(myScene).x
         let goalTranslation = myScene.frame.size.width / 2
+        let panX = deltaPanX + recognizer.translationInView(myScene).y
         var progress = Float(translation / goalTranslation)
         if (progress > 1) { progress = 1 }
-        else if (progress < 0) { return }
 
-        let deltaEuler = progress * Float(destCameraEulerY - originCameraEulerY)
-        let deltaPosiY = progress * (destCameraPositionY - originCameraPositionY)
-        let deltaPosiZ = progress * (destCameraPositionZ - originCameraPositionZ)
+        if (progress > 0) {
+            let deltaEuler = progress * Float(destCameraEulerY - originCameraEulerY)
+            let deltaPosiY = progress * (destCameraPositionY - originCameraPositionY)
+            let deltaPosiZ = progress * (destCameraPositionZ - originCameraPositionZ)
 
-        cameraNode.eulerAngles.y = Float(DegreesToRadians(Double(Float(originCameraEulerY) + deltaEuler)))
-        cameraNode.position.y = originCameraPositionY + deltaPosiY
-        cameraNode.position.z = originCameraPositionZ + deltaPosiZ
+            cameraNode.eulerAngles.y = Float(DegreesToRadians(Double(Float(originCameraEulerY) + deltaEuler)))
+            cameraNode.position.y = originCameraPositionY + deltaPosiY
+            cameraNode.position.z = originCameraPositionZ + deltaPosiZ
+        }
+        platesNode.eulerAngles.y = Float(DegreesToRadians(Double(panX)))
+
         if (recognizer.state == UIGestureRecognizerState.Ended) {
+            deltaPanX = panX
             let moveAction = SCNAction.moveTo(originCameraPosition, duration:0.3)
             let rotateAction = SCNAction.rotateToX(
                 CGFloat(DegreesToRadians(0)),
@@ -41,6 +46,8 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     var weightOffsetX:Float = 0
 
     let platesNode = SCNNode()
+
+    var deltaPanX:CGFloat = 0
 
     let cameraNode = SCNNode()
     let originCameraEulerY:Double = 0
@@ -186,11 +193,12 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         textGeometry.firstMaterial?.diffuse.contents = UIColor.lightGrayColor()
         //BUG: textGeometry.alignmentMode = kCAAlignmentCenter
 
+        let rotationOffset = Double(arc4random_uniform(59))
         for r in 1...3 {
             let textNode = SCNNode(geometry: textGeometry)
             let offset = Float(weightOffsetX) + Float(-1) * Float(thickness) / 2
             //textNode.rotation = SCNVector4(x: 1, y: 0, z: 0, w: Float(M_PI_2))
-            textNode.eulerAngles = SCNVector3(x: Float(DegreesToRadians(90)), y: Float(DegreesToRadians(360.0/3 * Double(r))), z: 0.0)
+            textNode.eulerAngles = SCNVector3(x: Float(DegreesToRadians(90)), y: Float(DegreesToRadians(rotationOffset + 360.0/3 * Double(r))), z: 0.0)
             textNode.position = SCNVector3(x: 0, y: offset, z: 0.0)
             // When SCNText.alignmentMode is fixed, don't do this
             textNode.pivot = SCNMatrix4MakeTranslation(Float(Double(fontSize) / 2.75 * Double(weightString.utf16Count)), Float(plateHeight)*0.75, 0)

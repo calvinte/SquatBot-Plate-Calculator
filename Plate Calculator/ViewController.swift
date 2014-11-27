@@ -7,15 +7,35 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     @IBOutlet weak var myLabel: UILabel!
     @IBOutlet weak var myScene: SCNView!
     @IBOutlet var myPan: UIPanGestureRecognizer!
-    @IBAction func handleGesture(sender: AnyObject) {
-        println("Panning?")
+    @IBAction func handleGesture(recognizer: UIPanGestureRecognizer!) {
+        let translation = recognizer.translationInView(myScene).x
+        let goalTranslation = myScene.frame.size.width / 2
+        var progress = Float(translation / goalTranslation)
+        if (progress > 1) { progress = 1 }
+        else if (progress < 0) { return }
+
+        let deltaEuler = progress * Float(destCameraEulerY - originCameraEulerY)
+        let deltaPosiY = progress * (destCameraPositionY - originCameraPositionY)
+        let deltaPosiZ = progress * (destCameraPositionZ - originCameraPositionZ)
+
+        cameraNode.eulerAngles.y = Float(DegreesToRadians(Double(Float(originCameraEulerY) + deltaEuler)))
+        cameraNode.position.y = originCameraPositionY + deltaPosiY
+        cameraNode.position.z = originCameraPositionZ + deltaPosiZ
     }
 
-    var pickerData = Array(45...1000).filter { (number) in number % 5 == 0 }
-    var plates = [45.0,35.0,25.0,10.0,5.0,2.5]
-    var barWeight = 45.0
+    let pickerData = Array(45...1000).filter { (number) in number % 5 == 0 }
+    let plates = [45.0,35.0,25.0,10.0,5.0,2.5]
+    let barWeight = 45.0
     let collarWidth:CGFloat = 5
     var weightOffsetX:Float = 0
+
+    let cameraNode = SCNNode()
+    let originCameraEulerY:Double = 0
+    let destCameraEulerY:Double = -60
+    let originCameraPositionY:Float = -30
+    let destCameraPositionY:Float = -200
+    let originCameraPositionZ:Float = 130
+    let destCameraPositionZ:Float = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,11 +63,12 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
     }
     
     func drawCamera() {
-        var cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         cameraNode.camera?.zFar = 1000
-        cameraNode.position = SCNVector3(x: 0, y: -30, z: 130)
-        cameraNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI_2))
+        cameraNode.position = SCNVector3(x: 0, y: originCameraPositionY, z: originCameraPositionZ)
+        //cameraNode.rotation = SCNVector4(x: 0, y: 0, z: 1, w: Float(M_PI_2))
+        cameraNode.eulerAngles = SCNVector3(x: 0, y: Float(DegreesToRadians(originCameraEulerY)), z: Float(DegreesToRadians(90)))
+
         myScene.scene?.rootNode.addChildNode(cameraNode)
     }
 
@@ -152,7 +173,6 @@ class ViewController: UIViewController,UIPickerViewDataSource,UIPickerViewDelega
         for r in 1...3 {
             let textNode = SCNNode(geometry: textGeometry)
             let offset = Float(weightOffsetX) + Float(-1) * Float(thickness) / 2
-            //Float(r)
             //textNode.rotation = SCNVector4(x: 1, y: 0, z: 0, w: Float(M_PI_2))
             textNode.eulerAngles = SCNVector3(x: Float(DegreesToRadians(90)), y: Float(DegreesToRadians(360.0/3 * Double(r))), z: 0.0)
             textNode.position = SCNVector3(x: 0, y: offset, z: 0.0)
